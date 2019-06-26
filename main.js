@@ -1,11 +1,16 @@
 const controllerEl = document.querySelector('.controller');
 let i = 0;
 
+let prevFrame = '';
 function render() {
-  eval(`/*
-  ${i}
-  */
-  //# sourceURL=foo.js`);
+  const frame = `/*
+${i}
+*/
+//# sourceURL=foo.js`;
+  if (prevFrame !== frame) {
+    prevFrame = frame;
+    eval(frame);
+  }
 }
 
 function handleInput() {
