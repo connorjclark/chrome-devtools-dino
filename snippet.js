@@ -4,9 +4,10 @@
 // 2. load about:dino
 // 3. rnable "Emulate focused page" in DevTools settings
 // 4. evaluate the snippet
-// 5. hit up arrow to trigger the game
-// 6. find 'controller' div in Elements panel, toggle styles to perform action
-// 7. profit
+// 5. find 'controller' div in Elements panel, toggle styles to perform action
+// 6. open Quick Source panel, open 'foo.js'
+// 7. jump (border-top) to start game
+// 8. profit
 
 const DEBUG = false;
 
