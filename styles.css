@@ -1,0 +1,10 @@
+* {
+  display: none;
+}
+
+/* doesn't really do anything but it's cool to see the element
+   momentarily have 1px left/right when moving. */
+.controller {
+  left: 1px;
+  right: 1px;
+}
