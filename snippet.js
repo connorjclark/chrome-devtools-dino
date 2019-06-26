@@ -5,7 +5,10 @@
 // 3. rnable "Emulate focused page" in DevTools settings
 // 4. evaluate the snippet
 // 5. hit up arrow to trigger the game
-// 6. profit
+// 6. find 'controller' div in Elements panel, toggle styles to perform action
+// 7. profit
+
+const DEBUG = false;
 
 (function () {
   if (performance.now.toString() === "function now() { [native code] }") {
@@ -14,20 +17,26 @@
     performance.now = (...args) => perfnow.call(performance) / 2.5;
   }
 
-  window.outascii = window.outascii || document.createElement('textarea');
-  outascii.style.cssText = `
-position: absolute;
-top: 0px;
-font-size: 8px;
-width: 760px;
-height: 363px;
-z-index: 10;
-font-family: monospace;
-background: #000000e0;
-color: #0bff0b;
-right: 0;
-`;
-  document.body.append(outascii);
+  if (DEBUG) {
+    window.outascii = window.outascii || document.createElement('textarea');
+    outascii.style.cssText = `
+  position: absolute;
+  top: 0px;
+  font-size: 8px;
+  width: 760px;
+  height: 363px;
+  z-index: 10;
+  font-family: monospace;
+  background: #000000e0;
+  color: #0bff0b;
+  right: 0;
+  `;
+    document.body.append(outascii);
+  }
+
+  if (!DEBUG) {
+    document.body.style.opacity = '0';
+  }
 
   let prevFrame = '';
   let controllerEl = null;
@@ -121,8 +130,10 @@ ${chars}
       eval(frame);
     }
 
-    // Write the char data into the output divs
-    outascii.textContent = chars;
+    if (DEBUG) {
+      // Write the char data into the output divs
+      outascii.textContent = chars;
+    }
 
     // Start over!
     setTimeout(_ => {
