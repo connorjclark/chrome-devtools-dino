@@ -1,16 +1,18 @@
 // works great on about:dino
 
-// 1. save this file to your snippets. 
+// 1. save this file to your snippets 
 // 2. load about:dino
-// 3. evaluate the snippet
-// 4. hit up arrow to trigger the game.
-// 5. profit
+// 3. rnable "Emulate focused page" in DevTools settings
+// 4. evaluate the snippet
+// 5. hit up arrow to trigger the game
+// 6. profit
 
-(function() {
-
- perfnow = performance.now; 
- // slow down performance.now so the dino game is Slooooooooww
- performance.now = (...args) => perfnow.call(performance) / 2.5;
+(function () {
+  if (performance.now.toString() === "function now() { [native code] }") {
+    perfnow = performance.now;
+    // slow down performance.now so the dino game is Slooooooooww
+    performance.now = (...args) => perfnow.call(performance) / 2.5;
+  }
 
   window.outascii = window.outascii || document.createElement('textarea');
   outascii.style.cssText = `
@@ -28,6 +30,7 @@ right: 0;
   document.body.append(outascii);
 
   let prevFrame = '';
+  let controllerEl = null;
   const back = document.createElement('canvas');
   const backcontext = back.getContext('2d');
   const ascii = '@GLftli;:,.  '
@@ -41,6 +44,11 @@ right: 0;
   const refreshRateInMs = 175;
 
   function domReady() {
+    controllerEl = document.createElement('div');
+    controllerEl.classList.add('controller');
+    document.body.appendChild(controllerEl);
+    controllerEl.style['border-top'] = 'solid';
+    controllerEl.style['border-bottom'] = 'solid';
 
     drawAscii(
       sourceCanvas,
@@ -50,7 +58,38 @@ right: 0;
     );
   }
 
+  function handleInput() {
+    let newBorderTop = controllerEl.style['border-top'];
+    let newBorderBottom = controllerEl.style['border-bottom'];
+
+    // space
+    if (newBorderTop === '') {
+      newBorderTop = 'solid';
+      document.dispatchEvent(new KeyboardEvent('keydown', { 'keyCode': 32, 'which': 32 }));
+      document.dispatchEvent(new KeyboardEvent('keyup', { 'keyCode': 32, 'which': 32 }));
+    }
+
+    // down
+    if (newBorderBottom === '') {
+      newBorderBottom = 'solid';
+      document.dispatchEvent(new KeyboardEvent('keydown', { 'keyCode': 40, 'which': 40 }));
+      setTimeout(() => {
+        document.dispatchEvent(new KeyboardEvent('keyup', { 'keyCode': 40, 'which': 40 }));
+      }, 300);
+    }
+
+    // Set the properties in the order which DevTools should display them.
+    if (controllerEl.style['border-top'] !== newBorderTop || controllerEl.style['border-bottom'] !== newBorderBottom) {
+      controllerEl.style['border-top'] = '';
+      controllerEl.style['border-bottom'] = '';
+      controllerEl.style['border-top'] = newBorderTop;
+      controllerEl.style['border-bottom'] = newBorderBottom;
+    }
+  }
+
   function drawAscii(sourceCanvas, bc, w, h) {
+    handleInput();
+
     bc.fillStyle = 'white';
     bc.fillRect(0, 0, w, h);
     bc.drawImage(sourceCanvas, 0, 0, w, h);
@@ -73,7 +112,6 @@ right: 0;
       chars += '\n';
     }
 
-    
     frame = `/*
 ${chars}
 */
@@ -88,7 +126,7 @@ ${chars}
 
     // Start over!
     setTimeout(_ => {
-       drawAscii(sourceCanvas, bc, w, h);
+      drawAscii(sourceCanvas, bc, w, h);
     }, refreshRateInMs);
   }
 
