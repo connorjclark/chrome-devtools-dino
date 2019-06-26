@@ -3,3 +3,5 @@
 ![](media/dino.gif)
 
 See snippet.js for instructions on how to play.
+
+co-authored @paulirish
